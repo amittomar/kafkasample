@@ -1,0 +1,21 @@
+## Test consumer
+# start broker
+bin/kafka-server-start.sh config/server-0.properties
+bin/kafka-server-start.sh config/server-1.properties
+bin/kafka-server-start.sh config/server-2.properties
+
+# list topic
+bin/kafka-topics.sh --zookeeper localhost:2181 --list
+
+# Create topic
+bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic topic-1 --partitions=3 --replication-factor=1
+bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic topic-2 --partitions=3 --replication-factor=1
+
+#describe topic
+bin/kafka-topics.sh --zookeeper localhost:2181 --describe
+
+# Start kafka producer from cell for testing consumer
+bin/kafka-producer-perf-test.sh --topic topic-1 --num-records 100 --record-size 1 --throughput 10 --producer-props bootstrap.servers=localhost:9092 key.serializer=org.apache.kafka.common.serialization.StringSerializer value.serializer=org.apache.kafka.common.serialization.StringSerializer
+bin/kafka-producer-perf-test.sh --topic topic-2 --num-records 100 --record-size 1 --throughput 10 --producer-props bootstrap.servers=localhost:9092 key.serializer=org.apache.kafka.common.serialization.StringSerializer value.serializer=org.apache.kafka.common.serialization.StringSerializer
+
+
